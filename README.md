@@ -22,3 +22,48 @@ https://github.com/dotnet/ClangSharp
 所以我对zstdcli做了一些修改，把差分压缩和解压缩的功能提取出来，集成到了libzstd中。
 
 
+## 生成&&应用差分文件
+
+```csharp
+using System;
+using zstd;
+
+class DemoBytes
+{
+    static void Main()
+    {
+        // 假设 refData 是参考文件的内容，srcData 是目标文件的内容
+        byte[] refData = System.IO.File.ReadAllBytes("ref.bin");
+        byte[] srcData = System.IO.File.ReadAllBytes("target.bin");
+
+        // 生成 patch（差分压缩结果）
+        byte[] patch = ZStandardDiffAPI.CompressPatch(
+            src: srcData,
+            refData: refData,
+            compressionLevel: 0,                 // 0 使用默认压缩级别
+            enableLongDistanceMatching: true,    // 建议启用 LDM
+            windowLog: null,                     // 让 API 自动根据 src 大小估算
+            chainLog: null,
+            targetLength: null
+        );
+
+        System.IO.File.WriteAllBytes("target.patch.zst", patch);
+        Console.WriteLine($"Patch written: target.patch.zst, size={patch.Length} bytes");
+
+        // 应用 patch（恢复原始目标数据）
+        byte[] restored = ZStandardDiffAPI.DecompressPatch(
+            patchBytes: patch,
+            refData: refData
+        );
+
+        System.IO.File.WriteAllBytes("target.restored.bin", restored);
+        Console.WriteLine($"Restored written: target.restored.bin, size={restored.Length} bytes");
+
+        // 校验恢复结果是否与原始一致
+        bool same = restored.Length == srcData.Length &&
+                    System.Linq.Enumerable.SequenceEqual(restored, srcData);
+        Console.WriteLine($"Restored equals original: {same}");
+    }
+}
+```
+
