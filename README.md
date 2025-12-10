@@ -22,6 +22,21 @@ https://github.com/dotnet/ClangSharp
 所以我对zstdcli做了一些修改，把差分压缩和解压缩的功能提取出来，集成到了libzstd中。
 
 
+待完成的工作：
+- [ ] android平台编译支持
+- [ ] ios平台编译支持
+- [ ] windows平台编译支持
+- [ ] linux平台编译支持
+- [ ] 差分功能的文档编写
+- [ ] 差分压缩功能集成
+- [ ] 差分解压缩功能集成
+- [ ] 差分功能的C#绑定
+- [ ] 差分功能的C#示例代码
+- [ ] 差分功能的单元测试
+- [ ] ClangSharpPInvokeGenerator生成工具以及环境配置文档
+- [ ] libzstd编译文档
+
+
 ## 生成&&应用差分文件
 
 ```csharp
