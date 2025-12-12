@@ -45,7 +45,7 @@ namespace zstd
 
     internal static unsafe partial class Methods
     {
-        [DllImport("libzstd", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport(zstd_dll.ZSTD_DLL_NAME, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
         public static extern sbyte* ZSTD_getErrorString(ZSTD_ErrorCode code);
     }
