@@ -1,5 +1,5 @@
 {
-    "name": "zstd-unity",
+    "name": "zstd.unity",
     "rootNamespace": "zstd",
     "references": [],
     "includePlatforms": [],

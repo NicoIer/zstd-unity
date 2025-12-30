@@ -1,7 +1,7 @@
 {
-  "name": "com.nicoier.zstd-unity",
+  "name": "com.nicoier.zstd.unity",
   "version": "1.0.0",
-  "displayName": "zstd-unity",
+  "displayName": "zstd.unity",
   "description": "zstd compression for unity.",
   "unity": "2021.3",
   "dependencies": {

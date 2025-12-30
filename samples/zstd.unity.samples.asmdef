@@ -1,9 +1,11 @@
 {
-    "name": "zstd-unity.samples",
+    "name": "zstd.unity.samples",
     "rootNamespace": "",
     "references": [
-        "zstd-unity",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "UniTask",
+        "zstd.unity",
+        "zstd.unity.patch"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
