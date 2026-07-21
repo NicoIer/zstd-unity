@@ -1,0 +1,12 @@
+{
+  "name": "com.nicoier.zebra",
+  "version": "1.0.0",
+  "displayName": "zebra",
+  "description": "zebra is a patch framework for Unity projects.",
+  "unity": "2022.3",
+
+  "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.nicoier.zstd.unity": "https://github.com/NicoIer/zstd-unity.git"
+  }
+}

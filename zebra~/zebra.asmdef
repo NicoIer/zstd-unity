@@ -1,0 +1,18 @@
+{
+    "name": "zstd.yooasset.patch",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:37516b1b3b8c24092b2ef90561ecaf5c",
+        "GUID:1fa12ebd740f64b3fb2b6e6e3c2e2f13"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
