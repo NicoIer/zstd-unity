@@ -20,11 +20,13 @@ namespace zstd
     [Serializable]
     public class PatchManifest
     {
-        public HashSet<string> patchFiles { get; set; }
+        public Dictionary<string, long> patchFiles { get; set; }
+        public Dictionary<string, List<long>> needFullDownloads { get; set; }
 
         public PatchManifest()
         {
-            patchFiles = new HashSet<string>();
+            patchFiles = new Dictionary<string, long>();
+            needFullDownloads = new Dictionary<string, List<long>>();
         }
     }
 
@@ -59,12 +61,9 @@ namespace zstd
         public static readonly int MinCompressLevel = Methods.ZSTD_minCLevel();
         public static readonly int MaxCompressLevel = Methods.ZSTD_maxCLevel();
 
-        /// <summary>
-        /// 某个版本的资源文件夹前缀
-        /// </summary>
-        public const string VersionFolderPrefix = "v";
 
         public const string ManifestFileName = "manifest.json";
+        public const string CompressedManifestFileName = "compressed.bytes";
         public const string PatchManifestFileName = "manifest.json";
         public const string PatchFolderName = "patches";
         public const string PatchFileSuffix = "patch";
@@ -141,7 +140,7 @@ namespace zstd
             string newMd5 = newest.fileName2Md5[currentFileName];
 
             string patchName = $"{currentMd5}_{newMd5}.{PatchFileSuffix}";
-            if (patchManifest.patchFiles.Contains(patchName)) return true;
+            if (patchManifest.patchFiles.ContainsKey(patchName)) return true;
             return false;
         }
 
@@ -170,11 +169,20 @@ namespace zstd
         {
             string currentVersion = currentManifest.version;
             string newestVersion = newestManifest.version;
+            string fullDownloadKey = $"{currentVersion}_{newestVersion}";
 
             foreach (var (fileName, newMd5) in newestManifest.fileName2Md5)
             {
-                // 如果当前版本没有这个文件，跳过
-                if (!currentManifest.fileName2Md5.ContainsKey(fileName)) continue;
+                // 如果当前版本没有这个文件，需要全量下载
+                if (!currentManifest.fileName2Md5.ContainsKey(fileName))
+                {
+                    string newFilePath = Path.Combine(newestVersionFolder, fileName);
+                    long newFileSize = new FileInfo(newFilePath).Length;
+                    if (!patchManifest.needFullDownloads.ContainsKey(fullDownloadKey))
+                        patchManifest.needFullDownloads[fullDownloadKey] = new List<long>();
+                    patchManifest.needFullDownloads[fullDownloadKey].Add(newFileSize);
+                    continue;
+                }
                 // 如果md5一样，跳过
                 string currentMd5 = currentManifest.fileName2Md5[fileName];
                 if (currentMd5 == newMd5) continue;
@@ -210,6 +218,9 @@ namespace zstd
                     Console.WriteLine(
                         $"Dropped patch from[{currentVersion}_{fileName}] to[{newestVersion}_{fileName}] : \n" +
                         $"{GetFileSize(refData.Length)} -> {GetFileSize(newestData.Length)} (patch size: {GetFileSize(patchBytes.Length)})");
+                    if (!patchManifest.needFullDownloads.ContainsKey(fullDownloadKey))
+                        patchManifest.needFullDownloads[fullDownloadKey] = new List<long>();
+                    patchManifest.needFullDownloads[fullDownloadKey].Add(newestData.Length);
                     continue;
                 }
 
@@ -220,7 +231,7 @@ namespace zstd
                 Console.WriteLine(
                     $"Generated patch from[{currentVersion}_{fileName}] to[{newestVersion}_{fileName}] : \n" +
                     $"{GetFileSize(refData.Length)} -> {GetFileSize(newestData.Length)} (patch size: {GetFileSize(patchBytes.Length)})");
-                patchManifest.patchFiles.Add(patchName);
+                patchManifest.patchFiles.Add(patchName, patchBytes.Length);
             }
         }
 

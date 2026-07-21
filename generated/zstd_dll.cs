@@ -5,10 +5,10 @@ namespace zstd
 {
     internal static class zstd_dll
     {
-#if !UNITY_IOS
-        public const string ZSTD_DLL_NAME = "libzstd";
-#else
+#if UNITY_IOS && !UNITY_EDITOR
         public const string ZSTD_DLL_NAME = "__Internal";
+#else
+        public const string ZSTD_DLL_NAME = "libzstd";
 #endif
     }
 }
